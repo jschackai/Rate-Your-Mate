@@ -1,0 +1,84 @@
+body{
+    width:95%;
+    height:95%;
+    margin:auto auto;
+    padding:1em;
+}
+
+h1{
+    font-size: 36px;
+    padding-bottom:1em;
+    padding-top:1em;
+    color:#E17009;
+}
+
+/* float styles */
+.right{float:right;}
+.left{float:left;}
+.clear{clear:both;}
+
+/* cheap-and-easy 'grid' styles */
+.whole{width:100%;}
+.half{width:45%;}
+.third{width:33%;}
+.quarter{width:24%;}
+
+.m-b-1em{
+  margin-bottom:1em;  
+}
+/* border-radius styles */
+.roundall{
+    padding:1em;
+    border:1px solid #79B7E7;
+    border-radius:3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+.roundtop{
+    padding:1em;
+    border:1px solid #79B7E7;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-top-right-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.roundbottom{
+    padding:1em;
+    border:1px solid #79B7E7;
+    -webkit-border-bottom-right-radius: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    -moz-border-radius-bottomright: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+.roundleft{
+    padding:1em;
+    border:1px solid #79B7E7;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+.roundright{
+    padding:1em;
+    border:1px solid #79B7E7;
+    -webkit-border-top-right-radius: 3px;
+    -webkit-border-bottom-right-radius: 3px;
+    -moz-border-radius-topright: 3px;
+    -moz-border-radius-bottomright: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+/* for timepicker */
+/* css for timepicker */
+.ui-timepicker-div .ui-widget-header{ margin-bottom: 8px; }
+.ui-timepicker-div dl{ text-align: left; }
+.ui-timepicker-div dl dt{ height: 25px; }
+.ui-timepicker-div dl dd{ margin: -25px 0 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
