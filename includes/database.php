@@ -110,8 +110,8 @@
         function getClasses($id){
             $classes=array();
             try{
-                $sth = $this->connection->prepare("SELECT cname, CLID FROM Classes, Users WHERE Classes.instructor=Users.UID");
-                $sth->bindParam(':class', $class, PDO::PARAM_STR);
+                $sth = $this->connection->prepare("SELECT DISTINCT cname, CLID FROM Classes, Users WHERE Classes.instructor=:id");
+                $sth->bindParam(':id', $id, PDO::PARAM_STR);
                 $sth->execute();
                 while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
                     $classes[]=array('name'=>$row['cname'],'id'=>$row['CLID']);

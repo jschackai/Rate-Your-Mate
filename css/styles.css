@@ -19,9 +19,12 @@ h1{
 
 /* cheap-and-easy 'grid' styles */
 .whole{width:100%;}
-.half{width:45%;}
+.half{width:48%;}
 .third{width:33%;}
 .quarter{width:24%;}
+
+/* visibility */
+.hidden{display:none;}
 
 .m-b-1em{
   margin-bottom:1em;  
@@ -73,6 +76,17 @@ h1{
     -moz-border-radius-bottomright: 3px;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
+}
+
+/* list styles */
+.grouplist{
+    list-style: none;
+    width:20em;
+}
+.student{
+    font-weight:bold;
+    margin-bottom:.2em;
+    width:20em;
 }
 
 /* for timepicker */

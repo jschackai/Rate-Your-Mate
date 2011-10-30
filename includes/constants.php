@@ -7,9 +7,9 @@
     error_reporting(-1);//turn off for live!
     date_default_timezone_set ("America/New_York");
     //databse info
-    define( "DB_DSN", "mysql:host=localhost;dbname=tincanwe_rym" );
-    define('DB_USER', 'tincanwe_rym');
-    define('DB_PASS', 'pAlh3ccaeghQOq1aqH07');
+    define( "DB_DSN", "mysql:host=localhost;dbname=wp4" );
+    define('DB_USER', 'sjpage');
+    define('DB_PASS', 'konkmove');
     define('DB_ERR', 'We appear to be having database issues, please bear with us and try again.');
     //persistant connection?
     try {
