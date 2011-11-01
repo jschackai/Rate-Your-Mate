@@ -1,16 +1,1 @@
-<?php
-if(!isset($_GET['v'])||!isset($_GET['class'])){
-    die;
-}else{ //Enrollment (class,user)
-    include('../includes/database.php');
-    $roster=$database->getRoster($_GET['class']);
-    $classlist="<ul>";    
-    foreach($roster as $student){
-      $classlist.="<li id='".$student['id']."'>".$student['lname'].", ".$student['fname']."</li>";
-    }
-    $classlist.="</ul>";
-   //echo"<pre>";print_r($roster);echo"</pre>";
-   echo $classlist;
-   }
-    
-?>
+<?phpif(!isset($_GET['v'])||!isset($_POST['class'])){    die;}else{ //Enrollment (class,user)    include('../includes/database.php');    $roster=$database->getRoster($_POST['class']);    if($roster!=null){    foreach($roster as $student){      $classlist.="<option id='".$student['id']."'>".$student['lname'].", ".$student['fname']."</option>";    }    }else{        $classlist="<option>There are no students in that class!</option>";    }   echo $classlist;   }    ?>
