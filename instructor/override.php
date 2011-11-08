@@ -1,6 +1,6 @@
 <?php
 	//Class Creation created by Jon Linden Modified by Stephen Page ;)
-	$_GET['page']='Instructor Setup'; //Variable to set up the page title - feeds header.php
+	$_GET['page']='Override Form'; //Variable to set up the page title - feeds header.php
     include('../includes/header.php');//this include file has all the paths for the stylsheets and javascript in it.
     $classes=$database->getClasses($session->UID);//function from the database.php file - returns an array of all classes for the provided instructor
 ?>

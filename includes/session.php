@@ -13,11 +13,11 @@
     include("database.php");
     include("mailer.php");
     include("form.php");
-    
+
     class Session{
         var $username;				//Username given on sign-up
-		var $realname;				//Actual first name/last name of user
-		var $UID;					//User ID from database
+        var $realname;				//Actual first name/last name of user
+        var $UID;					//User ID from database
         var $SESID;					//Random value generated on current login
         var $userlevel;				//The level to which the user pertains
         var $time;					//Time user was last active (page loaded)
@@ -25,6 +25,7 @@
         var $userinfo = array();	//The array holding all user info
         var $url;					//The page url current being viewed
         var $referrer;				//Last recorded site page viewed
+        var $lastlogin;             //Last time user logged in
         /**
         * Note: referrer should really only be considered the actual
         * page referrer in process.php, any other time it may be
@@ -107,7 +108,7 @@
                 /* User is logged in, set class variables */
                 $this->userinfo  = $database->getUserInfo($_SESSION['username']);
                 $this->username  = $this->userinfo['username'];
-				$this->realname  = $this->userinfo['fname']." ".$this->userinfo['lname'];
+                $this->realname  = $this->userinfo['fname']." ".$this->userinfo['lname'];
                 $this->UID    = $this->userinfo['UID'];
                 $this->userlevel = $this->userinfo['ulevel'];
                 return true;
@@ -158,8 +159,7 @@
             if($result == 1){
                 $field = "user";
                 $form->setError($field, "* Username not found");
-            }
-            else if($result == 2){
+            }else if($result == 2){
                     $field = "pass";
                     $form->setError($field, "* Invalid password");
                 }
@@ -172,16 +172,20 @@
             /* Username and password correct, register session variables */
             $this->userinfo  = $database->getUserInfo($subuser);
             $this->username  = $_SESSION['username'] = $this->userinfo['username'];
-			$this->UID  = $_SESSION['UID'] = $this->userinfo['UID'];
+            $this->UID  = $_SESSION['UID'] = $this->userinfo['UID'];
             $this->SESID    = $_SESSION['SESID']   = $this->generateRandID();
             $this->userlevel = $this->userinfo['ulevel'];
+            $this->lastlogin = $this->userinfo['timestamp'];
 
-            /* Insert UID into database and update active users table */
-            $database->updateUserField($this->username, "SESID", $this->SESID);
-            $database->addActiveUser($this->username, $this->time);
+            /* Insert SESID into database and update login fields */
+            $database->updateUserField($this->UID, "SESID", $this->SESID);
+            $database->updateUserField($this->UID, "last_log", $this->lastlogin);
+            //should't need this, but it's not updating...
+            $database->updateUserField($this->UID, "timestamp", date('Y-m-d H:i:s'));
+            $database->addActiveUser($this->UID, $this->time);
 
             /**
-            * This is the cool part: the user has requested that we remember that
+            * The user has requested that we remember that
             * he's logged in, so we set two cookies. One to hold his username,
             * and one to hold his random value UID. It expires by the time
             * specified in constants.php. Now, next time he comes to our site, we will
@@ -230,9 +234,9 @@
             /* Set user level to guest */
             $this->username  = '';
             $this->userlevel = 0;
-			
-			/* redirecrt to main page */
-			header("Location: index.php");
+
+            /* redirecrt to main page */
+            header("Location: index.php");
         }
 
         /**
@@ -377,12 +381,21 @@
 
             /* Update password since there were no errors */
             if($subcurpass && $subnewpass){
-                $database->updateUserField($this->username,"password",md5($subnewpass));
+                // Create a 256 bit (64 characters) long random salt Let's add 'something random' and the username to the salt as well for added security
+                $salt=hash('sha256',uniqid(mt_rand(),true).'something random'.strtolower($this->username)); 
+                // Prefix the password with the salt
+                $hash=$salt.$subnewpass; 
+                // Hash the salted password a bunch of times
+                for($i=0;$i<10000;$i++){$hash=hash('sha256',$hash);} 
+                // Prefix the hash with the salt so we can find it back later
+                $hash=$salt.$hash;
+                //store in database:
+                $database->updateUserField($this->UID,"password",$hash);
             }
 
             /* Change Email */
             if($subemail){
-                $database->updateUserField($this->username,"email",$subemail);
+                $database->updateUserField($this->UID,"email",$subemail);
             }
 
             /* Success! */
@@ -394,6 +407,15 @@
         * an administrator, false otherwise.
         */
         function isAdmin(){
+            return ($this->userlevel == ADMIN_LEVEL ||
+            $this->username  == ADMIN_NAME);
+        }
+
+        /**
+        * isInstructor - Returns true if currently logged in user is
+        * an instructor, false otherwise.
+        */
+        function isInstructor(){
             return ($this->userlevel == INSTRUCTOR_LEVEL ||
             $this->username  == INSTRUCTOR_NAME);
         }

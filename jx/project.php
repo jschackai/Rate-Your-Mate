@@ -3,7 +3,6 @@
     $sid=htmlentities($_POST["sid"],ENT_QUOTES,'iso-8859-1');
     if(!isset($_GET['v'])&&$sid=NULL){die;}//tests for dummy data added for security
     include("../includes/database.php");
-    include("../includes/functions.php");
     //grab $_post variables except for group lists  (we'll deal with them separately) and create a project
 
     try{

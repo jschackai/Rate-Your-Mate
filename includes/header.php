@@ -18,10 +18,11 @@
     <script type="text/javascript" src="../js/jquery-ui-timepicker.js"></script>
     <script type="text/javascript" src="../js/jquery.guid.js"></script>
     <script type="text/javascript" src="../js/ui.spinner.min.js"></script>
+    <script type="text/javascript" src="../js/highcharts.js"></script>
     </head>
     
     <?php
-    $greeting=($session->username!='')? "You are logged in as ".$session->realname." <a href='logout.php'>Logout</a>" : "You are not logged in! <a href='login.php'>Log in</a>";
+    $greeting=($session->username!='')? "You are logged in as ".$session->realname." <a href='".DOC_ROOT."/logout.php'>Logout</a>" : "You are not logged in! <a href='".DOC_ROOT."/login.php'>Log in</a>";
     echo"<body><div class='right'>$greeting</div>";
 ?>
     

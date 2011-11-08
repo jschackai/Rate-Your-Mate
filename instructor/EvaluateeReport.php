@@ -1,30 +1,39 @@
-<HTML>
-<HEAD>
-<TITLE>Evaluatee Report</TITLE>
-</HEAD>
+<?php //do NOT put anything above this line!
+    $_GET['page']='Evaluatee Report'; //Variable to set up the page title - feeds header.php
+    include('../includes/header.php');//this include file has all the paths for the stylsheets and javascript in it.
+?>
 
 <BODY>
-<h1>Rate Your Mate</h1>
-<h2>Evaluatee Report</h2>
+<h1>Evaluatee Report</h1>
 
 <form action="ACTION GOES HERE">
 <table>
 <tr>
 	<td>Project ID:</td>
-	<td><select name="projectID"><option value="pId">Project list here...</option></td>
+	<td>
+	<select name="projectID" id="projectID">
+		<option>Choose one...</option>
+		<?php
+		while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+                    echo"<option value='".$row['PID']."'>".$row['pname']."</option>";
+                }
+		?>
+	</select>
+	</td>
 </tr>
 <tr>
 	<td>Choose a Student:</td>
-	<td><select name="projectID"><option value="student">Student list here...</option></td>
+	<td>
+	<select name="student" id="students">
+	<option>Choose one...</option>
+	</select>
+	</td>
 </tr>
 <tr>
 	<td>Grade:</td>
-	<td><input type="int" name="grade" value="Grade as text field?"/></td>
+	<td><input type="number" name="grade" value="Grade as text field?"/></td>
 </tr>
-<tr>
-        <td>Grade:</td>
-        <td><select name="grade"><option value="grade">Or as a drop-down?</option></td>
-</tr>
+
 </table>
 
 <hr>
@@ -56,9 +65,25 @@ while($i<=$numOfEvals){
 <textarea rows='5' cols='70'>comments here...</textarea>
 <br>
 
-<button type="button">Save Changes</button>
-<button type="button">Send to Student</button>
-<button type="button">Cancel</button>
-
+<button type="button" value='save' id='save'>Save Changes</button>
+<button type="button" value='send' id='send'>Send to Student</button>
+<button type="reset"  value='reset' id='reset'>Reset</button>
+<script type='text/Javascript'> //Whee-jQuery!
+ $(document).ready(function(){ 
+    $("input:submit, button, #reset").button();
+	
+	$("#projectID").change(function(){
+            var value=$(this).val();
+            $.ajax({  
+                type: "POST",  
+                url: "../jx/project-student.php?v="+jQuery.Guid.New(),  
+                data: "projectID="+value,  
+                success: function(data){
+                    $("#students").html(data);
+                }  
+            });
+        }); 
+});
+	</script>
 </BODY>
 </HTML>

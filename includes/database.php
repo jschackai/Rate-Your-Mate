@@ -6,7 +6,6 @@
     */
 
     include("constants.php");
-    include("functions.php");
     class MySQLDB{
         var $connection;         //The MySQL database connection
         var $num_active_users;   //Number of active users viewing site
@@ -41,8 +40,6 @@
                 echo DB_ERR;
             }
             if(!$count || ($count < 1)){return 1;} //Indicates username failure
-            $hash=$dbarray['password'];
-            /* Retrieve password from result, strip slashes */
 
             /* Validate that password is correct */
             $hasher=$dbarray['password'];
@@ -145,10 +142,10 @@
         * updateUserField - Updates a field, specified by the field
         * parameter, in the user's row of the database.
         */
-        function updateUserField($username, $field, $value){
+        function updateUserField($UID, $field, $value){
             try{
-                $sth = $this->connection->prepare("UPDATE ".TBL_USERS." SET ".$field." = :value WHERE username = :uname");
-                $sth->bindParam(':uname', $username, PDO::PARAM_STR);
+                $sth = $this->connection->prepare("UPDATE ".TBL_USERS." SET ".$field." = :value WHERE UID = :uid");
+                $sth->bindParam(':uid', $UID, PDO::PARAM_STR);
                 if(is_int($value))
                     $param = PDO::PARAM_INT;
                 elseif(is_bool($value))
@@ -159,8 +156,9 @@
                     $param = PDO::PARAM_STR;
                 else
                     $param = FALSE;                   
-                if($param)
+                if($param){
                     $sth->bindValue(":value",$value,$param);
+                }
                 return $sth->execute();
             }catch(Exception $e){
                 echo $e;
@@ -241,7 +239,7 @@
         */
         function addActiveUser($username,$time){
             try{  
-                $sth = $this->connection->prepare("UPDATE ".TBL_USERS." SET timestamp = :time WHERE username = :uname");
+                $sth = $this->connection->prepare("UPDATE ".TBL_ACTIVE." SET timestamp = :time WHERE username = :uname");
                 $sth->bindParam(':uname', $username, PDO::PARAM_STR);
                 $sth->bindParam(':time', $time, PDO::PARAM_STR);
                 $sth->execute();
@@ -307,7 +305,7 @@
                 $sth->bindParam(':query', $query, PDO::PARAM_STR);
                 return $sth->execute();
             }catch(Exception $e){
-                echo DB_ERR;
+                echo $e;
             }
             $sth=null;
         }
@@ -358,6 +356,23 @@
             }
             return $students;
         }
+        /**
+        * getClasses - returns an array of all classes for a provided instructor
+        */
+        function getClasses($id){
+            $classes=array();
+            try{
+                $sth = $this->connection->prepare("SELECT DISTINCT cname, CLID FROM Classes, Users WHERE Classes.instructor=:id");
+                $sth->bindParam(':id', $id, PDO::PARAM_STR);
+                $sth->execute();
+                while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+                    $classes[]=array('name'=>$row['cname'],'id'=>$row['CLID']);
+                }
+            }catch(Exception $e){
+                echo $e;
+            }
+            return $classes;
+        }
 
         /**
         * getRoster - returns an array of all students in provided class, along with associated IDs
@@ -376,23 +391,116 @@
             }
             return $roster;
         }
-
+        
         /**
-        * getClasses - returns an array of all classes for a provided instructor
+        * getGroupID - returns GID given user and project
         */
-        function getClasses($id){
-            $classes=array();
+        function getGroupID($project,$user){
             try{
-                $sth = $this->connection->prepare("SELECT DISTINCT cname, CLID FROM Classes, Users WHERE Classes.instructor=:id");
-                $sth->bindParam(':id', $id, PDO::PARAM_STR);
+                $sth = $this->connection->prepare("SELECT GID FROM Groups WHERE PID=:project AND UID=:user");
+                $sth->bindParam(':project', $project, PDO::PARAM_STR);
+                $sth->bindParam(':user', $user, PDO::PARAM_STR);
                 $sth->execute();
                 while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
-                    $classes[]=array('name'=>$row['cname'],'id'=>$row['CLID']);
+                    $gid=$row['GID'];
                 }
             }catch(Exception $e){
                 echo $e;
             }
-            return $classes;
+            return $gid;
+        }
+
+		
+        /**
+        * groupRoster - returns an array of all students in provided group, along with associated IDs
+        */
+        function groupRoster($gid,$user){
+            $groster=array();
+            try{
+                $sth = $this->connection->prepare("SELECT fname,lname,Users.UID AS UID FROM Users JOIN Groups ON Users.UID=Groups.UID AND GID=:gid");
+                $sth->bindParam(':gid', $gid, PDO::PARAM_STR);
+                $sth->execute();
+                while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+                    if($row['UID']!=$user){
+                        $groster[]=array('id'=>$row['UID'],'fname'=>$row['fname'],'lname'=>$row['lname']);
+                    }
+                }
+            }catch(Exception $e){
+                echo $e;
+            }
+            return $groster;
+        }
+        
+		/**
+        * getGroups - returns an array of all groups in provided class, along with associated GIDs
+        */
+        function getGroups($class){
+            $groups=array();
+            try{
+                $sth = $this->connection->prepare("SELECT GID, name FROM Groups WHERE PID=:class");
+                $sth->bindParam(':class', $class, PDO::PARAM_STR);
+                $sth->execute();
+                while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+                    $groups[]=array('id'=>$row['UID'],'fname'=>$row['fname'],'lname'=>$row['lname']);
+                }
+            }catch(Exception $e){
+                echo $e;
+            }
+            return $groups;
+        }
+		
+		/**
+        * getMembers - returns an array of all groups in provided class, along with associated GIDs
+        */
+        function getMembers($class,$group){
+            $members=array();
+            try{
+                $sth = $this->connection->prepare("SELECT fname,lname,UID FROM Users, Enrollment WHERE Users.UID=Enrollment.user AND Enrollment.class=:class ORDER BY lname ASC, fname ASC");
+                $sth->bindParam(':class', $class, PDO::PARAM_STR);
+				$sth->bindParam(':group', $group, PDO::PARAM_STR);
+                $sth->execute();
+                while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+                    $members[]=array('id'=>$row['UID'],'fname'=>$row['fname'],'lname'=>$row['lname']);
+                }
+            }catch(Exception $e){
+                echo $e;
+            }
+            return $members;
+        }
+
+        /**
+        * getBehaviors - returns an array of all behaviors for a provided group
+        */
+        function getBehaviors($gid){
+            $behaviors=array();
+            try{
+                $sth = $this->connection->prepare("SELECT title,notes,BID,timestamp FROM Behaviors WHERE GID=:gid");
+                $sth->bindParam(':gid', $gid, PDO::PARAM_STR);
+                $sth->execute();
+                while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+                    $behaviors[]=array('title'=>$row['title'],'notes'=>$row['notes'],'id'=>$row['BID'],'time'=>$row['timestamp']);
+                }
+            }catch(Exception $e){
+                echo DB_ERR;
+            }
+            return $behaviors;
+        }
+        
+        /**
+        * getMaxPoints - returns the max allowed points for the provided project
+        */
+        function getMaxPoints($pid){
+            try{
+                $sth = $this->connection->prepare("SELECT maxpoints FROM Projects WHERE PID = :pid");
+                $sth->bindParam(':pid', $pid, PDO::PARAM_STR);
+                $sth->execute();
+                while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+                    $maxpoints=$row['maxpoints'];
+                }
+            }catch(Exception $e){
+                echo $e;
+            }
+            return $maxpoints;
         }
 
     };//end MySQLDB

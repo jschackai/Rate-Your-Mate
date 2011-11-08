@@ -1,7 +1,7 @@
-<HTML>
-<HEAD>
-<TITLE>Evaluator Report</TITLE>
-</HEAD>
+<?php //do NOT put anything above this line!
+    $_GET['page']='Evaluator Report'; //Variable to set up the page title - feeds header.php
+    include('../includes/header.php');//this include file has all the paths for the stylsheets and javascript in it.
+?>
 
 <BODY>
 <h1>Rate Your Mate</h1>

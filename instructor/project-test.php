@@ -1,11 +1,10 @@
-<?php //do NOT put anything above this line!
-    $_GET['page']=$page='Project Setup'; //Variable to set up the page title - feeds header.php
+<?php
+    $_GET['page']='Instructor Setup'; //Variable to set up the page title - feeds header.php
     include('../includes/header.php');//this include file has all the paths for the stylsheets and javascript in it.
     $classes=$database->getClasses($session->UID);//function from the database.php file - returns an array of all classes for the provided instructor ID
-    //need to add option to edit existing projects!
 ?>
 
-<h1><?php echo $page;?><img src='../img/help.png' title='help'/></h1>
+<h1>Instructor Setup<img src='../img/help.png' title='help'/></h1>
 <!-- start the form! -->
 <form id='newproj'  method='post' action='procnew.php'>
     <div id='leftside' class='left half'>
@@ -21,16 +20,14 @@
                     }
                 ?>            
             </select>
-            <label for='pid' style='margin-left:2em;'>Project ID:</label> <input type='text' id='pid' name='pid' placeholder='Insert project name.' />
-            <div class='ui-state-error ui-corner-all' style='display:none;font-style:italic;padding:.1em;width:210px;float:right' id='projname'>
-                <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>Project name already in use!
-            </div>
-        </div>
 
+            <label for='pid' style='margin-left:2em;'>Project ID:</label> <input type='text' id='pid' name='pid' placeholder='Insert project name.' />
+            <div class='ui-state-error ui-corner-all' style='display:none;font-style:italic;padding:.1em;width:210px;' id='projname'><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>Project name already in use!</div>
+        </div>
         <div class='m-b-1em'>
+            <!-- <label for='numgroups'>Number of Groups:</label> <input id='numgroups' name='numgroups' type="number" value="2" size='4' min='2' /> -->
             <button id="add_tab" title='Click to add another group tab.' style="float:right;position:relative;z-index:100;top:2.8em;right:.3em;color:#E17009">Add Group</button><span id='tabWarn' style='display:none'>&nbsp;Don't worry! The groups will be renumbered in order when the project is finalized.</span>
         </div>
-
         <div class='whole clear m-b-1em'>
             <div id='groups' class='ui-corner-all'> <!-- this div contains the tabs -->
                 <ul id='grouptabs'>
@@ -49,87 +46,74 @@
                 </div>
             </div>
         </div>
-
         <div class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em'>
             <div class='ui-corner-top ui-widget-header m-b-1em'>Project Dates:</div>
-            <div class=' ui-tabs ui-widget'>
-                <label for="oDate" style='margin-right:1em;'>Open Date:</label><input type="date" name="oDate" id="oDate"><br />
-                <label for="cDate" style='margin-right:1em;'>Close Date:</label><input type="date" name="cDate" id="cDate" style='margin-left:-2px;'><br />
-            </div>
+            <label for="oDate" style='margin-right:1em;'>Open Date:</label><input type="date" name="oDate" id="oDate"><br />
+            <label for="cDate" style='margin-right:1em;'>Close Date:</label><input type="date" name="cDate" id="cDate" style='margin-left:-2px;'><br />
         </div>
-
         <div class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em'>
             <div class='ui-corner-top ui-widget-header m-b-1em'>Contracts:</div>
-            <div class=' ui-tabs ui-widget'>
-                <div class='m-b-1em'>
-                    <label>Who is creating the contract? (instructor always has override privileges)</label>
-                    <div class='buttonset m-t-05em' id='radioset1'>
-                        <input type="radio" name="contract" id='contract1' value="student" checked='checked' />
-                        <label for='contract1' title='Allow the students to create their own contract by consensus.'>Students</label>
-                        <input type="radio" name="contract" id='contract2' value="instructor" />
-                        <label for='contract2' title='Have the students abide by an instructor-created contract.'>Instructor</label>
-                    </div>
+            <div class='m-b-1em'>
+                <label>Who is creating the contract? (instructor always has override privileges)</label>
+                <div class='buttonset m-t-05em' id='radioset1'>
+                    <input type="radio" name="contract" id='contract1' value="student" checked='checked' />
+                    <label for='contract1' title='Allow the students to create their own contract by consensus.'>Students</label>
+                    <input type="radio" name="contract" id='contract2' value="instructor" />
+                    <label for='contract2' title='Have the students abide by an instructor-created contract.'>Instructor</label>
                 </div>
             </div>
         </div>
-
         <div class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em'>
             <div class='ui-corner-top ui-widget-header m-b-1em'>Grades and Late Submissions:</div>
-            <div class=' ui-tabs ui-widget'>
-                <div class='m-b-1em'>
-                    <label>Submit grades for (choose one):</label>
-                    <div class='buttonset m-b-1em m-t-05em' id='radioset2'>
-                        <input type="radio" name="grades" id='grades1' value="subject" />
-                        <label for='grades1' title='Submit a grade for each student without grading them on their ability to peer review.'>Evaluatee only</label>
-                        <input type="radio" name="grades" id='grades2' value="judge" />
-                        <label for='grades2' title='Submit a grade for each student only on their ability to peer review.'>Evaluator only</label>
-                        <input type="radio" name="grades" id='grades3' value="both" checked='checked' />
-                        <label for='grades3' title='Give each student a separate grade for reviewing and being reviewed.'>Both</label>
-                        <input type="radio" name="grades" id='grades4' value="none" />
-                        <label for='grades4' title='No grades associated with Rate-Your-Mate'>None</label>
-                    </div>
-                </div> 
-
-                <div class='m-b-1em'>
-                    <label >Prevent Late Submissions:</label>
-                    <div id='radioset3' class='buttonset m-b-1em m-t-05em'>
-                        <input type="radio" name="late" id="lateyes" value="yes" checked='checked' /><label for="lateyes">Yes</label>
-                        <input type="radio" name="late" id="lateno" value="no"/><label for="lateno">No</label>
-                    </div>
+            <div class='m-b-1em'>
+                <label>Submit grades for (choose one):</label>
+                <div class='buttonset m-b-1em m-t-05em' id='radioset2'>
+                    <input type="radio" name="grades" id='grades1' value="subject" />
+                    <label for='grades1' title='Submit a grade for each student without grading them on their ability to peer review.'>Evaluatee only</label>
+                    <input type="radio" name="grades" id='grades2' value="judge" />
+                    <label for='grades2' title='Submit a grade for each student only on their ability to peer review.'>Evaluator only</label>
+                    <input type="radio" name="grades" id='grades3' value="both" checked='checked' />
+                    <label for='grades3' title='Give each student a separate grade for reviewing and being reviewed.'>Both</label>
+                    <input type="radio" name="grades" id='grades4' value="none" />
+                    <label for='grades4' title='No grades associated with Rate-Your-Mate'>None</label>
+                </div>
+            </div> 
+            <div class='m-b-1em'>
+                <label >Prevent Late Submissions:</label>
+                <div id='radioset3' class='buttonset m-b-1em m-t-05em'>
+                    <input type="radio" name="late" id="lateyes" value="yes" checked='checked' /><label for="lateyes">Yes</label>
+                    <input type="radio" name="late" id="lateno" value="no"/><label for="lateno">No</label>
                 </div>
             </div>
         </div>
-    </div>
 
+    </div>
     <div id='rightside' class='right half'>
         <div id='studentbox' class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em' style='margin-top:4.8em;min-height:9.2em;'>
-            <div class='ui-corner-top ui-widget-header m-b-1em'>Students:</div>
-            <div class=' ui-tabs ui-widget'>Please choose a class to the left to populate the student list.</div>
+        <div class='ui-corner-top ui-widget-header m-b-1em'>Students:</div>
+            <p>Please choose a class to the left to populate the student list.</p>
         </div>
-
         <div class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em'>
             <div class='ui-corner-top ui-widget-header m-b-1em'>Evaluations:</div>
-            <div class=' ui-tabs ui-widget'>
-                <div class='m-b-1em'>
-                    <label for='numeval'>How many evaluations? </label>
-                    <input id='numeval' name='numeval' type="text" class='spin' value="2" size='4' min='0' style='display:inline' title='Grades will be averaged across all evaluations.'>
+            <div class='m-b-1em'>
+                <label for='points'>How many points to distribute per evaluation? </label>
+                <input id='points' name='points' type="text" value="2" size='4' min='0' style='display:inline' title="Decide on the 'points pool' that students have to divide between their teammates on evaluations.">
+                <br/><span class='hidden' style='font-style: italic;' id='avgpnts'>(For your average group size, we recommend <span id='recpnt'>X</span>.)</span>
+            </div>
+            <div class='m-b-1em'>
+                <label for='numeval'>How many evaluations? </label>
+                <input id='numeval' name='numeval' type="text" class='spin' value="2" size='4' min='0' style='display:inline' title='Grades will be averaged across all evaluations.'>
+            </div>
+            <div id='evals'>
+                <div class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em half' id='e1' style='padding-bottom: 0.5em;'>
+                    <div class='ui-corner-top ui-widget-header m-b-1em'>Eval 1:</div>
+                    <label for="oDate" style='margin-right:1em;'>Open Date:</label><input type="date" name="e1oDate" id="e1oDate"><br />
+                    <label for="cDate" style='margin-right:1em;'>Close Date:</label><input type="date" name="e1cDate" id="e1cDate" style='margin-left:-2px;'><br />
                 </div>
-                <div class='m-b-1em'>
-                    <label for='points'>How many points to distribute per evaluation? </label>
-                    <input id='points' name='points' type="text" value="2" size='4' min='0' style='display:inline' title="Decide on the 'points pool' that students have to divide between their teammates on evaluations.">
-                    <br/><span class='hidden' style='font-style: italic;' id='avgpnts'>(For your average group size, we recommend <span id='recpnt'>X</span>.)</span>
-                </div>
-                <div id='evals'>
-                    <div class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em half' id='e1' style='padding-bottom: 0.5em;'>
-                        <div class='ui-corner-top ui-widget-header m-b-1em'>Eval 1:</div>
-                        <label for="oDate" style='margin-right:1em;'>Open Date:</label><input type="date" name="e1oDate" id="e1oDate"><br />
-                        <label for="cDate" style='margin-right:1em;'>Close Date:</label><input type="date" name="e1cDate" id="e1cDate" style='margin-left:-2px;'>
-                    </div>
-                    <div class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em half' id='e2' style='padding-bottom: 0.5em;'>
-                        <div class='ui-corner-top ui-widget-header m-b-1em'>Eval 2:</div>
-                        <label for="oDate" style='margin-right:1em;'>Open Date:</label><input type="date" name="e2oDate" id="e2oDate"><br />
-                        <label for="cDate" style='margin-right:1em;'>Close Date:</label><input type="date" name="e2cDate" id="e2cDate" style='margin-left:-2px;'>
-                    </div>
+                <div class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em half' id='e2' style='padding-bottom: 0.5em;'>
+                    <div class='ui-corner-top ui-widget-header m-b-1em'>Eval 2:</div>
+                    <label for="oDate" style='margin-right:1em;'>Open Date:</label><input type="date" name="e2oDate" id="e2oDate"><br />
+                    <label for="cDate" style='margin-right:1em;'>Close Date:</label><input type="date" name="e2cDate" id="e2cDate" style='margin-left:-2px;'><br />
                 </div>
             </div>    
         </div>
@@ -148,34 +132,18 @@
 
     $("#radioset1, #radioset2, #radioset3").buttonset();
 
-    function datePick(){
-        $('[id$=oDate], [id$=cDate]').datetimepicker({timeFormat: 'hh:mm:ss',ampm: false});
-    }
-
-
+    $('#oDate, #cDate').datetimepicker({timeFormat: 'hh:mm:ss',ampm: false});
 
     $(document).ready(function(){
-        datePick();        
         var tab_count = 3;
         $("#dialog").dialog({autoOpen:false,title:"Project Creation"});//hides dialog to prepare for use as needed.
         // tabs init with a custom tab template and an "add" callback filling in the content
         var $tabs = $("#groups").tabs({
             tabTemplate: "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close right' title='Removing a group also removes any students added to the group.'>Remove Tab</span></li>",
+            event: "mouseover",
             add: function(event, ui){
                 var tab_content = "<ul class='grouplist' id='gl"+tab_count+"'><li class='placeholder' style='font-style:italic;font-weight:normal'>Add students here</li></ul>";
                 $(ui.panel).append(tab_content);
-            }
-        });
-
-        $(".grouplist").droppable({
-            activeClass: "ui-state-highlight",
-            hoverClass: "ui-state-hover",
-            accept: ":not(.ui-sortable-helper)",
-            drop: function(event,ui){
-                $(this).find(".placeholder").remove();
-                $("<li class='ui-state-highlight student' id='"+ui.draggable.attr('id')+"'>"+ui.draggable.html()+"&nbsp;<a href='#'>[x]</a></li>").appendTo(this);
-                ui.draggable.css({display:'none'});
-                avgPoints();
             }
         });
 
@@ -200,7 +168,6 @@
                 elength++;
                 var template = "<div class='ui-corner-all ui-tabs ui-widget ui-widget-content m-b-1em half' id='e"+elength+"' style='padding-bottom: 0.5em;'><div class='ui-corner-top ui-widget-header m-b-1em'>Eval "+elength+":</div><label for='oDate' style='margin-right:1em;'>Open Date:</label><input type='date' name='e"+elength+"oDate' id='e"+elength+"oDate'><br /><label for='cDate' style='margin-right:1em;'>Close Date:</label><input type='date' name='e1cDate' id='e1cDate' style='margin-left:-2px;'><br /></div>";
                 $("#evals").append(template);
-                datePick();
                 remain++;
             }
             while(remain>0){
@@ -209,6 +176,17 @@
             }
         }
 
+        $(".grouplist").droppable({
+            activeClass: "ui-state-highlight",
+            hoverClass: "ui-state-hover",
+            accept: ":not(.ui-sortable-helper)",
+            drop: function(event,ui){
+                $(this).find(".placeholder").remove();
+                $("<li class='ui-state-highlight student' id='"+ui.draggable.attr('id')+"'>"+ui.draggable.html()+"&nbsp;<a href='#'>[x]</a></li>").appendTo(this);
+                ui.draggable.css({display:'none'});
+                avgPoints();
+            }
+        });
 
         // actual addTab function: adds new tab using the title input from the form above
         function addTab(){
@@ -222,6 +200,7 @@
                     $(this).find(".placeholder").remove();
                     $("<li class='ui-state-highlight student' id='"+ui.draggable.attr('id')+"'>"+ui.draggable.html()+"&nbsp;<a href='#'>[x]</a></li>").appendTo(this);
                     ui.draggable.css({display:'none'});
+
                     avgPoints();
                 }
             });
@@ -263,7 +242,7 @@
                 url: "../jx/projname.php?v="+jQuery.Guid.New(),  
                 data: "projname="+$('#pid').val()+"&sid="+jQuery.Guid.New(),
                 success:function(data){
-                    (data=='1')? ($("#pid").css('backgroundColor','#F0B5B5'),$("#projname").show()) : ($("#pid").css('backgroundColor','#FFF'),$("#projname").hide());
+                    (data=='1')? ($("#pid").css('backgroundColor','#E17009'),$("#projname").show()) : ($("#pid").css('backgroundColor','#FFF'),$("#projname").hide());
                 }
             });
         }

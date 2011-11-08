@@ -1,30 +1,7 @@
-<?php
-    include('../includes/database.php'); //includes file with the database funtions so we can use them here
-    if(isset($_POST['IID'])){$user=htmlentities($_POST["IID"],ENT_QUOTES,'iso-8859-1');}else{$user="";}
-    try{//this is a PDO connection to the database
-        $sth = $database->connection->prepare("SELECT fname, lname FROM Users WHERE UID=:uid");//prepare the query
-        $sth->bindParam(':uid', $user, PDO::PARAM_STR); //binds the user variable to the query so PDO can format it correctly
-        $sth->execute(); //runs the query
-        while ($row = $sth->fetch(PDO::FETCH_ASSOC)){ //loop through the results
-            $uname=$row['fname']." ".$row['lname']; //associate the results with a php variable
-        }
-    }catch(Exception $e){//error handling
-        echo $e;
-    }
-    $classes=$database->getClasses($user);//function from the database.php file - returns an array of all classes for the provided instructor ($user)
+<?php //do NOT put anything above this line!
+    $_GET['page']='Student Final Report'; //Variable to set up the page title - feeds header.php
+    include('../includes/header.php');//this include file has all the paths for the stylsheets and javascript in it.
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-    <head>
-        <title>Student Final Report</title>
-        <!-- css stylesheets -->
-        <link href='../css/styles.css' rel='stylesheet'/>
-        <link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/redmond/jquery-ui.css' rel='stylesheet'/>
-        <!-- javascript files -->
-        <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'></script>
-        <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js'></script>
-
-    </head>
     <body>
         <h1>Rate Your Mate</h1>
         <form action="Insert_PHP" method="post">
