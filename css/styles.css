@@ -6,7 +6,7 @@ body{
     height:95%;
     margin:auto auto;
     padding:1em;
-	min-width:800px;
+	min-width:105em;
 }
 
 h1{
@@ -29,7 +29,9 @@ label{
 .whole{width:100%;}
 .half{width:49.5%;}
 .third{width:32.3%;}
+.two-thirds{width:64.6%;}
 .quarter{width:24.2%;}
+.three-quarters{width:72.6%;}
 
 /* visibility */
 .hidden{display:none;}

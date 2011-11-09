@@ -502,6 +502,23 @@
             }
             return $maxpoints;
         }
+        
+        /**
+        * getEID - returns the max allowed points for the provided project
+        */
+        function getEID($pid){
+            try{
+                $sth = $this->connection->prepare("SELECT EID FROM Evals WHERE PID = :pid AND (CURDATE() BETWEEN odate AND cdate)");
+                $sth->bindParam(':pid', $pid, PDO::PARAM_STR);
+                $sth->execute();
+                while ($row = $sth->fetch(PDO::FETCH_ASSOC)){
+                    $eid=$row['EID'];
+                }
+            }catch(Exception $e){
+                echo $e;
+            }
+            return $eid;
+        }
 
     };//end MySQLDB
 

@@ -22,7 +22,7 @@
     </head>
     
     <?php
-    $greeting=($session->username!='')? "You are logged in as ".$session->realname." <a href='".DOC_ROOT."/logout.php'>Logout</a>" : "You are not logged in! <a href='".DOC_ROOT."/login.php'>Log in</a>";
+    $greeting=($session->username!='')? "You are logged in as ".$session->realname." <a href='".DOC_ROOT."/logout.php'>Logout</a>" : "You are not logged in! <a href='".DOC_ROOT."/index.php'>Log in</a>";
     echo"<body><div class='right'>$greeting</div>";
 ?>
     

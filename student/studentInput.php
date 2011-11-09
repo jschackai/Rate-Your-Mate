@@ -1,16 +1,19 @@
 <?php //do NOT put anything above this line!
+error_reporting(-1);
     $_GET['page']=$page='Student Input'; //Variable to set up the page title - feeds header.php
     include('../includes/header.php');//this include file has all the paths for the stylsheets and javascript in it.
-    $project='0068F621-1BC9-477E-8DDB-50D637DB8884';//pass me a project
+    $project='756D1205-A1F8-4AFC-9239-BB9DF748A88F';//pass me a project
+    $eid=$database->getEID($project);
     $gid=$database->getGroupID($project,$session->UID);
     $team=$database->groupRoster($gid,$session->UID);//get list of group members from database
     $behaviors=$database->getBehaviors($gid);
     $maxval=$database->getMaxPoints($project);
 ?>
-
-
+<body class='two-thirds' style='min-width:105em;'>
 <h1><?php echo $page;?><img src='../img/help.png' title='help'/></h1>
 <form id='behaveform' method='post' action="ACTION GOES HERE">
+<input type='hidden' name='id' id='id' value='<?php echo $session->UID;?>'/>
+<input type='hidden' name='EID' id='EID' value='<?php echo $eid;?>'/>
    <div class='half' >
         <?php foreach($behaviors as $behave){
                 $title=$behave['title'];
@@ -22,7 +25,7 @@
                     $name=$teammate['fname']." ".$teammate['lname'];
                     echo"<div class='ui-corner-all' style='border:1px solid #A6C9E2;border-left:2em solid ".$colors[$c].";'>"
                     ."<textarea rows='5' cols='10' name='comment-$bid.$id'"
-                    ."style='border:none;overflow:auto;resize:vertical;width:100%' placeholder='Enter Comments for $name Here...'></textarea></div>";
+                    ."style='border:none;overflow:auto;resize:vertical;width:100%' id='needs to pull rid from dB' placeholder='Enter Comments for $name Here...'></textarea></div>";
                     ($c<6)?$c++:$c=0;//for looping through our rainbow ;)
                 }
         }?>
@@ -69,9 +72,10 @@
             <p id='explanation' >Click on a behavior name to get the description of the behavior.</p>
         </div>
     </div>
-    <button type="submit">Save Changes</button>
-    <button type="submit">Submit</button>
-    <button type="reset" id='reset'>Cancel</button>
+    <br/>
+    <button type="submit" name='save' id='save'>Save Changes</button>
+    <button type="submit" name='submit' id='submit'>Submit</button>
+    <button type="reset" name='reset' id='reset' onClick='history.go(0)'>Cancel</button>
 </form>
 <div id='dialog'></div>
 <div id='modialog'>You must fill in all comments before scoring.</div>
@@ -170,14 +174,16 @@
 
         });
 		
-		$("form#behaveform").submit(function(){
+		$("#submit, #save").click(function(){
 		var scorenums;
 		$("input[id^=sval-]").each(function(){scorenums+="&"+$(this).attr('id')+"="+$(this).val();});
-		$("input[name^=comment-]").each(function(){scorenums+="&"+$(this).attr('name')+"="+$(this).val();});
+		$("textarea[name^=comment-]").each(function(){scorenums+="&"+$(this).attr('name')+"="+$(this).val();});
+        var id="&id="+$('#id').val();
+        var method="method="+$(this).attr('id');
 		$.ajax({  
                 type:"POST",  
                 url: "../jx/sinput.php?v="+jQuery.Guid.New(),  
-                data: scorenums+"&sid="+jQuery.Guid.New(),
+                data: method+id+scorenums+"&sid="+jQuery.Guid.New(),
                 success:function(){
                     $("#dialog").text("Your scoring has been submitted.");
                     $("#dialog").dialog("open");
