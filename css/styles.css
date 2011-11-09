@@ -1,8 +1,12 @@
+html{
+    font-size:12px;
+}
 body{
     width:95%;
     height:95%;
     margin:auto auto;
     padding:1em;
+	min-width:105em;
 }
 
 h1{
@@ -12,6 +16,10 @@ h1{
     color:#E17009;
 }
 
+label{
+    font-size: 14px;
+    font-weight:bold;
+}
 /* float styles */
 .right{float:right;}
 .left{float:left;}
@@ -19,14 +27,26 @@ h1{
 
 /* cheap-and-easy 'grid' styles */
 .whole{width:100%;}
-.half{width:45%;}
-.third{width:33%;}
-.quarter{width:24%;}
+.half{width:49.5%;}
+.third{width:32.3%;}
+.two-thirds{width:64.6%;}
+.quarter{width:24.2%;}
+.three-quarters{width:72.6%;}
+
+/* visibility */
+.hidden{display:none;}
 
 .m-b-1em{
-  margin-bottom:1em;  
+    margin-bottom:1em;
+}
+.m-t-05em{
+    margin-top:0.5em;
 }
 /* border-radius styles */
+.border{
+    border: 1px solid #A6C9E2;  
+    padding:3px;
+}
 .roundall{
     padding:1em;
     border:1px solid #79B7E7;
@@ -73,6 +93,19 @@ h1{
     -moz-border-radius-bottomright: 3px;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
+}
+
+/* list styles */
+.grouplist{
+    list-style: none;
+    width:20em;
+    min-height:2em;
+}
+.student{
+    font-weight:bold;
+    margin-bottom:.2em;
+    width:20em;
+    font-style:.8em;
 }
 
 /* for timepicker */

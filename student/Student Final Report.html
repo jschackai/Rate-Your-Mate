@@ -9,6 +9,7 @@
 		<form action="Insert_PHP" method="post">
 
         <select name="Project ID" size="5">
+        <!-- get projects from database and loop -->
          	 <option value="Project 1">Project 1</option>
   			 <option value="Project 2">Project 2</option>
  			 <option value="Project 3">Project 3</option>
@@ -17,7 +18,7 @@
 
 			<h2><label>Mean Score <input type="text" name="author" /></label></h2>
 			<h2><label>Grade: <input type="text" name="date" /></label></h2>
-			
+		<!-- get behaviors from database (based on project and group) and loop through them, adding appropriate student comments. -->			
                 <p>Anonymous Student Comments:</p>
 				        <label>Behavior 1 <textarea name="Behavior 1" rows="5" cols="60"></textarea></label>
                 <p>Instructor Comments:</p>
